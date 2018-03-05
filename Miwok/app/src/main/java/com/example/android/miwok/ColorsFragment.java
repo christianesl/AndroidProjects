@@ -1,18 +1,3 @@
-/*
- * Copyright (C) 2016 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.example.android.miwok;
 
 
@@ -30,54 +15,35 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 /**
- * {@link Fragment} that displays a list of color vocabulary words.
+ * A simple {@link Fragment} subclass.
  */
 public class ColorsFragment extends Fragment {
 
-    /** Handles playback of all the sound files */
+    //Media player object
     private MediaPlayer mMediaPlayer;
 
-    /** Handles audio focus when playing a sound file */
+    // Handles audio focus while playing sound file
     private AudioManager mAudioManager;
 
-    /**
-     * This listener gets triggered whenever the audio focus changes
-     * (i.e., we gain or lose audio focus because of another app or device).
-     */
-    private AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    AudioManager.OnAudioFocusChangeListener mOnAudioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         @Override
         public void onAudioFocusChange(int focusChange) {
-            if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
+            if(focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT ||
                     focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-                // The AUDIOFOCUS_LOSS_TRANSIENT case means that we've lost audio focus for a
-                // short amount of time. The AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK case means that
-                // our app is allowed to continue playing sound but at a lower volume. We'll treat
-                // both cases the same way because our app is playing short sound files.
-
-                // Pause playback and reset player to the start of the file. That way, we can
-                // play the word from the beginning when we resume playback.
+                // AUDIOFOCUS_LOSS TRANSIENT means we have lost audio focus for a short amount of time
+                // and AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK means we have lost audio focus
+                // our app still continues to play song at lower volume but in both cases,
+                // we want our app to pause playback and start it from beginning.
                 mMediaPlayer.pause();
                 mMediaPlayer.seekTo(0);
             } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                // The AUDIOFOCUS_GAIN case means we have regained focus and can resume playback.
+                // it means we have gained focused and start playback
                 mMediaPlayer.start();
-            } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                // The AUDIOFOCUS_LOSS case means we've lost audio focus and
-                // Stop playback and clean up resources
+            }else if(focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                // it means we have completely lost the focus and we
+                // have to stop the playback and free up the playback resources
                 releaseMediaPlayer();
             }
-        }
-    };
-
-    /**
-     * This listener gets triggered when the {@link MediaPlayer} has completed
-     * playing the audio file.
-     */
-    private MediaPlayer.OnCompletionListener mCompletionListener = new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mediaPlayer) {
-            // Now that the sound file has finished playing, release the media player resources.
-            releaseMediaPlayer();
         }
     };
 
@@ -85,89 +51,72 @@ public class ColorsFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.word_list, container, false);
 
-        // Create and setup the {@link AudioManager} to request audio focus
-        mAudioManager = (AudioManager) getActivity().getSystemService(Context.AUDIO_SERVICE);
+        //create and setup link to get audio focus
+        mAudioManager = (AudioManager)getActivity().getSystemService(Context.AUDIO_SERVICE);
 
-        // Create a list of words
+
         final ArrayList<Word> words = new ArrayList<Word>();
-        words.add(new Word(R.string.color_red, R.string.miwok_color_red,
-                R.drawable.color_red, R.raw.color_red));
-        words.add(new Word(R.string.color_mustard_yellow, R.string.miwok_color_mustard_yellow,
-                R.drawable.color_mustard_yellow, R.raw.color_mustard_yellow));
-        words.add(new Word(R.string.color_dusty_yellow, R.string.miwok_color_dusty_yellow,
-                R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
-        words.add(new Word(R.string.color_green, R.string.miwok_color_green,
-                R.drawable.color_green, R.raw.color_green));
-        words.add(new Word(R.string.color_brown, R.string.miwok_color_brown,
-                R.drawable.color_brown, R.raw.color_brown));
-        words.add(new Word(R.string.color_gray, R.string.miwok_color_gray,
-                R.drawable.color_gray, R.raw.color_gray));
-        words.add(new Word(R.string.color_black, R.string.miwok_color_black,
-                R.drawable.color_black, R.raw.color_black));
-        words.add(new Word(R.string.color_white, R.string.miwok_color_white,
-                R.drawable.color_white, R.raw.color_white));
+        words.add(new Word("red", "weṭeṭṭi", R.drawable.color_red, R.raw.color_red));  // resource id is of integer type
+        words.add(new Word("green", "chokokki", R.drawable.color_green, R.raw.color_green));
+        words.add(new Word("brown", "ṭakaakki", R.drawable.color_brown, R.raw.color_brown));
+        words.add(new Word("gray", "ṭopoppi", R.drawable.color_gray, R.raw.color_gray));
+        words.add(new Word("black","kululli", R.drawable.color_black, R.raw.color_black));
+        words.add(new Word("white", "kelelli", R.drawable.color_white, R.raw.color_white));
+        words.add(new Word("dusty yellow", "ṭopiisә", R.drawable.color_dusty_yellow, R.raw.color_dusty_yellow));
+        words.add(new Word("mustard yellow", "chiwiiṭә", R.drawable.color_mustard_yellow, R.raw.color_mustard_yellow));
 
-        // Create an {@link WordAdapter}, whose data source is a list of {@link Word}s. The
-        // adapter knows how to create list items for each item in the list.
-        WordAdapter adapter = new WordAdapter(getActivity(), words, R.color.category_colors);
+        // setting up the array adapter
+        WordAdapter itemsAdapter= new WordAdapter(getActivity(), words, R.color.category_colors);
 
-        // Find the {@link ListView} object in the view hierarchy of the {@link Activity}.
-        // There should be a {@link ListView} with the view ID called list, which is declared in the
-        // word_list.xml layout file.
-        ListView listView = (ListView) rootView.findViewById(R.id.list);
-
-        // Make the {@link ListView} use the {@link WordAdapter} we created above, so that the
-        // {@link ListView} will display list items for each {@link Word} in the list.
-        listView.setAdapter(adapter);
-
-        // Set a click listener to play the audio when the list item is clicked on
+        // finding the listView and setting the adapter to it
+        final ListView listView = (ListView)rootView.findViewById(R.id.word_list);
+        listView.setAdapter(itemsAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // Release the media player if it currently exists because we are about to
-                // play a different sound file
-                releaseMediaPlayer();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                // Get the {@link Word} object at the given position the user clicked on
-                Word word = words.get(position);
+                // relase the media player object if currently exist because we are going to change the song
+                releaseMediaPlayer();
 
                 // Request audio focus so in order to play the audio file. The app needs to play a
                 // short audio file, so we will request audio focus with a short amount of time
                 // with AUDIOFOCUS_GAIN_TRANSIENT.
-                int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener,
-                        AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+                int result = mAudioManager.requestAudioFocus(mOnAudioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
 
-                if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                    // We have audio focus now.
+                if(result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                    //we have the audio focus now
 
-                    // Create and setup the {@link MediaPlayer} for the audio resource associated
-                    // with the current word
-                    mMediaPlayer = MediaPlayer.create(getActivity(), word.getAudioResourceId());
-
-                    // Start the audio file
+                    // creates new media player object
+                    mMediaPlayer = MediaPlayer.create(getActivity(), words.get(position).getAudioResourceId());
                     mMediaPlayer.start();
 
-                    // Setup a listener on the media player, so that we can stop and release the
-                    // media player once the sound has finished playing.
-                    mMediaPlayer.setOnCompletionListener(mCompletionListener);
+                    /**
+                     * set on completion listener on the mediaplayer object
+                     * and relase media player object as soon song stops playing*/
+                    mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+
+                            // now the sound file has finished player, so free up the media player resources
+                            releaseMediaPlayer();
+                        }
+                    });
                 }
             }
         });
-
         return rootView;
     }
 
+    // release audio resource when activity is stopped
     @Override
     public void onStop() {
         super.onStop();
-
-        // When the activity is stopped, release the media player resources because we won't
-        // be playing any more sounds.
         releaseMediaPlayer();
     }
 
@@ -191,4 +140,5 @@ public class ColorsFragment extends Fragment {
             mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener);
         }
     }
+
 }
